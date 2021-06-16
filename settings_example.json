@@ -1,0 +1,30 @@
+{
+    "Environment": "LOCAL",
+    "Logging": {
+        "LogFile": "app_smartwateringsystem.log",
+        "LogLevel": "DEBUG"
+    },
+    "AppSettings": {
+        "Port": 28900
+    },
+    "SmartPlug": {
+        "IpAddress": "XXX.XXX.XXX.XXX"
+    },
+    "OpenWeather": 
+    {
+        "Latitude": "50.931661",
+        "Langitude": "10.721136",
+        "AppId": "abcdefghijklmnopqrstuvwxyz1234567890",
+        "UnwantedWeatherData": [
+            "current",
+            "minutely",
+            "alerts"
+        ],
+        "WantedWeatherData": ["daily", "hourly"]
+    },
+    "Watering": {
+        "TimeForWatering": "08:00",
+        "WateringDurationInSeconds": 60,
+        "DelayBetweenWateringInSeconds": 15
+    }
+}
