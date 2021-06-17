@@ -112,13 +112,14 @@ def handleWatering():
 
 if __name__ == '__main__':
     initSettings()
-    initLogging()
+    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+        initLogging()
 
-    initWeatherHandler()
-    initSmartPlugHandler()
+        initWeatherHandler()
+        initSmartPlugHandler()
 
-    schedulerThread = threading.Thread(target=startScheduler)  
-    schedulerThread.start()
-
+        schedulerThread = threading.Thread(target=startScheduler)  
+        schedulerThread.start()
     port = appSettings["AppSettings"]["Port"]
-    app.run(host="localhost", port=port, debug=True)
+    app.run(host="localhost", port=port, debug=True) #, use_reloader=False)
+        
