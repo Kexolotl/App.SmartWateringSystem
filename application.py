@@ -4,10 +4,12 @@ import threading
 import logging
 import os.path
 from flask import Flask, render_template
+from flask_bootstrap import Bootstrap
 from utilities.weather import OpenWeatherHandler
 from utilities.smartplug import SmartPlugHandler
 
 app = Flask(__name__)
+Bootstrap(app)
 
 appSettings = None
 smartPlugHandler = None
