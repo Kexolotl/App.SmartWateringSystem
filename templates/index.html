@@ -1,3 +1,20 @@
-<!doctype html>
-<title>Hello from Flask</title>
-<h1>Hello, World!</h1>
+{% extends "bootstrap/base.html" %}
+{% block title %}This is an example page{% endblock %}
+
+{% block navbar %}
+{% endblock %}
+
+{% block content %}
+    <h1>Hello, Bootstrap</h1>
+
+    <div class="alert alert-danger" role="alert">
+        Status: Is Offline
+    </div>
+    <div class="alert alert-success" role="alert">
+        Status: Is Online
+    </div>
+
+    <button type="button" class="btn btn-success">Turn on</button>
+    <button type="button" class="btn btn-danger">Turn off</button>
+
+{% endblock %}

@@ -47,6 +47,12 @@ class OpenWeatherHandler:
             return 0
         return statistics.mean(rainPercentages)
 
+    def isRainingToday(self):
+        logging.info("Get weather forcast for today")
+
+        values = self._weatherData[self._wantedWeatherData[0]]
+        return "Rain" in values["weather"]["main"]
+
     def getAverageTemperature(self, amountOfHours):
         logging.info("Get average temperature for the next %s hours." % (amountOfHours))
 

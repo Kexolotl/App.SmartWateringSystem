@@ -20,6 +20,8 @@ WATERING_INTENSITY_LEVEL_HIGH = 3
 WATERING_INTENSITY_LEVEL_MEDIUM = 2
 WATERING_INTENSITY_LEVEL_LOW = 1
 
+RAINING_DAY_BEFORE = False
+
 @app.route("/")
 def index():
     value = smartPlugHandler.isOnline
@@ -73,6 +75,27 @@ def startScheduler():
     while 1:
         schedule.run_pending()
 
+def emitWaterIntesity(averageProbabilityOfRain, averageTemperature):
+    if averageProbabilityOfRain <= 20:
+        if (averageTemperature > 16 and not RAINING_DAY_BEFORE):
+            return WATERING_INTENSITY_LEVEL_HIGH
+        else:
+            return WATERING_INTENSITY_LEVEL_MEDIUM
+    elif 20 < averageProbabilityOfRain <= 60:
+        if (averageTemperature > 27 and not RAINING_DAY_BEFORE):
+            return WATERING_INTENSITY_LEVEL_HIGH
+        elif averageTemperature >= 18 and not RAINING_DAY_BEFORE:
+            return WATERING_INTENSITY_LEVEL_MEDIUM
+        else:
+            return WATERING_INTENSITY_LEVEL_LOW
+    elif averageProbabilityOfRain > 60:
+        if averageTemperature > 27 and not RAINING_DAY_BEFORE:
+            return WATERING_INTENSITY_LEVEL_MEDIUM
+        else:
+            return WATERING_INTENSITY_LEVEL_LOW
+    else:
+        return WATERING_INTENSITY_LEVEL_LOW
+
 def handleWatering():
     logging.info("Start handle watering.")
     averageProbabilityOfRain = openWeatherHandler.getAverageProbabilityOfRain(HOURS_FOR_WEATHER_CALCULATION)
@@ -81,36 +104,14 @@ def handleWatering():
     wateringDuration = appSettings["Watering"]["WateringDurationInSeconds"]
     delayBetweenWatering = appSettings["Watering"]["DelayBetweenWateringInSeconds"]
 
-    # RULESET
-    if averageProbabilityOfRain <= 20:
-        if (averageTemperature > 16):
-            logging.info("Repeat watering with intesity of %s  watering duration %s and delay %s." % (WATERING_INTENSITY_LEVEL_HIGH, wateringDuration, delayBetweenWatering))
-            smartPlugHandler.repeat(WATERING_INTENSITY_LEVEL_HIGH, wateringDuration, delayBetweenWatering)
-        else:
-            logging.info("Repeat watering with intesity of %s  watering duration %s and delay %s." % (WATERING_INTENSITY_LEVEL_MEDIUM, wateringDuration, delayBetweenWatering))
-            smartPlugHandler.repeat(WATERING_INTENSITY_LEVEL_MEDIUM, wateringDuration, delayBetweenWatering)
-        return
+    logging.info("Average probability of rain: %s." % (averageProbabilityOfRain))
+    logging.info("Average temperatur: %s." % (averageTemperature))
+
+    waterIntensity = emitWaterIntesity(averageProbabilityOfRain, averageTemperature)
+    logging.info("Repeat watering with intesity of %s  watering duration %s and delay %s." % (waterIntensity, wateringDuration, delayBetweenWatering))
+    smartPlugHandler.repeat(waterIntensity, wateringDuration, delayBetweenWatering)
     
-    if 20 < averageProbabilityOfRain <= 60:
-        if (averageTemperature > 27):
-            logging.info("Repeat watering with intesity of %s  watering duration %s and delay %s." % (WATERING_INTENSITY_LEVEL_HIGH, wateringDuration, delayBetweenWatering))
-            smartPlugHandler.repeat(WATERING_INTENSITY_LEVEL_HIGH, wateringDuration, delayBetweenWatering)
-        elif averageTemperature < 18:
-            logging.info("Repeat watering with intesity of %s  watering duration %s and delay %s." % (WATERING_INTENSITY_LEVEL_LOW, wateringDuration, delayBetweenWatering))
-            smartPlugHandler.repeat(WATERING_INTENSITY_LEVEL_LOW, wateringDuration, delayBetweenWatering)
-        else:
-            logging.info("Repeat watering with intesity of %s  watering duration %s and delay %s." % (WATERING_INTENSITY_LEVEL_MEDIUM, wateringDuration, delayBetweenWatering))
-            smartPlugHandler.repeat(WATERING_INTENSITY_LEVEL_MEDIUM, wateringDuration, delayBetweenWatering)
-        return
-    
-    if averageProbabilityOfRain > 60:
-        if averageTemperature > 27:
-            logging.info("Repeat watering with intesity of %s  watering duration %s and delay %s." % (WATERING_INTENSITY_LEVEL_MEDIUM, wateringDuration, delayBetweenWatering))
-            smartPlugHandler.repeat(WATERING_INTENSITY_LEVEL_MEDIUM, wateringDuration, delayBetweenWatering)
-        else:
-            logging.info("Repeat watering with intesity of %s  watering duration %s and delay %s." % (WATERING_INTENSITY_LEVEL_LOW, wateringDuration, delayBetweenWatering))
-            smartPlugHandler.repeat(WATERING_INTENSITY_LEVEL_LOW, wateringDuration, delayBetweenWatering)
-        return
+    RAINING_DAY_BEFORE = openWeatherHandler.isRainingToday()
 
 if __name__ == '__main__':
     initSettings()
