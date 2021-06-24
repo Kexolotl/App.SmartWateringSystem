@@ -97,6 +97,7 @@ def emitWaterIntesity(averageProbabilityOfRain, averageTemperature):
         return WATERING_INTENSITY_LEVEL_LOW
 
 def handleWatering():
+    global RAINING_DAY_BEFORE
     logging.info("Start handle watering.")
     averageProbabilityOfRain = openWeatherHandler.getAverageProbabilityOfRain(HOURS_FOR_WEATHER_CALCULATION)
     averageTemperature = openWeatherHandler.getAverageTemperature(8)
@@ -113,16 +114,14 @@ def handleWatering():
     
     RAINING_DAY_BEFORE = openWeatherHandler.isRainingToday()
 
+initSettings()
+initLogging()
+initWeatherHandler()
+initSmartPlugHandler()
+
+schedulerThread = threading.Thread(target=startScheduler)  
+schedulerThread.start()
+
 if __name__ == '__main__':
-    initSettings()
-    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-        initLogging()
-
-        initWeatherHandler()
-        initSmartPlugHandler()
-
-        schedulerThread = threading.Thread(target=startScheduler)  
-        schedulerThread.start()
-    port = appSettings["AppSettings"]["Port"]
-    app.run(host="localhost", port=port, debug=True) #, use_reloader=False)
+    app.run(host="localhost", port=28200, debug=True) #, use_reloader=False)
         
