@@ -121,7 +121,6 @@ if __name__ == '__main__':
         initLogging()
         schedulerThread = threading.Thread(target=startScheduler)  
         schedulerThread.start()
-        logging.info("Start scheduler for watering")
         
         initWeatherHandler()
         initSmartPlugHandler()
