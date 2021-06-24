@@ -15,6 +15,14 @@ For the moment: Watering intensity with the values 3, 2 and 1 (It must be adjust
 1. Create a `settings.json` based on `settings_example.json`
     1. Possible configurations
 
+# Installation on Raspberry
+1. copy smartwatering.service into `/etc/systemd/system/`
+    1. sudo systemctl start smartwatering
+    1. sudo systemctl enable smartwatering
+1. copy nginx config to `/etc/nginx/sites-available/`
+    1. sudo ln -s /etc/nginx/sites-available/nginx_smartwatering /etc/nginx/sites-enabled
+    1. sudo nginx -t
+    1. sudo systemctl restart nginx
 
 # Future work
 1. wsgi configuration
