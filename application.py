@@ -114,18 +114,23 @@ def handleWatering():
     
     RAINING_DAY_BEFORE = openWeatherHandler.isRainingToday()
 
-initSettings()
+if __name__ == '__main__':
+    initSettings()
 
-if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+    if os.environ.get("WERKZEUG_RUN_MAIN") == "true" and appSettings["Environment"] == "LOCAL":
+        initLogging()
+        schedulerThread = threading.Thread(target=startScheduler)  
+        schedulerThread.start()
+        logging.info("Start scheduler for watering")
+        
+        initWeatherHandler()
+        initSmartPlugHandler()
+    app.run(host="localhost", port=28200, debug=True) #, use_reloader=False)
+else:
+    initSettings()
     initLogging()
     schedulerThread = threading.Thread(target=startScheduler)  
     schedulerThread.start()
-    logging.info("Start scheduler for watering")
-
-initWeatherHandler()
-initSmartPlugHandler()
-
-
-if __name__ == '__main__':
-    app.run(host="localhost", port=28200, debug=True) #, use_reloader=False)
+    initWeatherHandler()
+    initSmartPlugHandler()
         
