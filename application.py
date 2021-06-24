@@ -28,6 +28,26 @@ def index():
     logging.info(value)
     return render_template('index.html')
 
+@app.route("/logs")
+@app.route("/logs/<int:amountlines>")
+def logs(amountlines=None):
+    log_filename = "app_smartwateringsystem.log"
+    if not os.path.isfile(log_filename):
+        return "No log file found."
+    
+    if (amountlines is not None):
+        amountlines = 0 - amountlines
+    else:
+        amountlines = -100
+    
+    log_file = open(log_filename, "r")
+    lines = log_file.readlines()
+    log_file.close()
+    last_lines = lines[amountlines:]
+    result = "<br>".join(last_lines)
+    return result
+
+
 def initSettings():
     if not os.path.isfile("settings.json"):
         raise Exception('Missing configuration file `settings.json`. Please create this with `settings_example.json`.')
@@ -124,7 +144,7 @@ if __name__ == '__main__':
         
         initWeatherHandler()
         initSmartPlugHandler()
-    app.run(host="localhost", port=28200, debug=True) #, use_reloader=False)
+    app.run(host="localhost", port=28200, debug=True, use_reloader=True)
 else:
     initSettings()
     initLogging()
