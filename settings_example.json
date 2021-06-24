@@ -4,9 +4,6 @@
         "LogFile": "app_smartwateringsystem.log",
         "LogLevel": "DEBUG"
     },
-    "AppSettings": {
-        "Port": 28900
-    },
     "SmartPlug": {
         "IpAddress": "XXX.XXX.XXX.XXX"
     },
