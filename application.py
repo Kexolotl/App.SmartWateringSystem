@@ -139,8 +139,10 @@ if __name__ == '__main__':
 else:
     initSettings()
     initLogging()
-    schedulerThread = threading.Thread(target=startScheduler)  
-    schedulerThread.start()
+
     initWeatherHandler()
     initSmartPlugHandler()
+
+    schedulerThread = threading.Thread(target=startScheduler)  
+    schedulerThread.start()
         
