@@ -19,6 +19,7 @@ HOURS_FOR_WEATHER_CALCULATION = 8
 WATERING_INTENSITY_LEVEL_HIGH = 3
 WATERING_INTENSITY_LEVEL_MEDIUM = 2
 WATERING_INTENSITY_LEVEL_LOW = 1
+WATERING_INTENSITY_LEVEL_NONE = 0
 
 RAINING_DAY_BEFORE = False
 
@@ -96,25 +97,15 @@ def startScheduler():
         schedule.run_pending()
 
 def emitWaterIntesity(averageProbabilityOfRain, averageTemperature):
+    if RAINING_DAY_BEFORE and averageTemperature < 30:
+        return WATERING_INTENSITY_LEVEL_NONE
+
     if averageProbabilityOfRain <= 20:
-        if (averageTemperature > 16 and not RAINING_DAY_BEFORE):
-            return WATERING_INTENSITY_LEVEL_HIGH
-        else:
-            return WATERING_INTENSITY_LEVEL_MEDIUM
+        return WATERING_INTENSITY_LEVEL_MEDIUM
     elif 20 < averageProbabilityOfRain <= 60:
-        if (averageTemperature > 27 and not RAINING_DAY_BEFORE):
-            return WATERING_INTENSITY_LEVEL_HIGH
-        elif averageTemperature >= 18 and not RAINING_DAY_BEFORE:
-            return WATERING_INTENSITY_LEVEL_MEDIUM
-        else:
-            return WATERING_INTENSITY_LEVEL_LOW
-    elif averageProbabilityOfRain > 60:
-        if averageTemperature > 27 and not RAINING_DAY_BEFORE:
-            return WATERING_INTENSITY_LEVEL_MEDIUM
-        else:
-            return WATERING_INTENSITY_LEVEL_LOW
-    else:
         return WATERING_INTENSITY_LEVEL_LOW
+    elif averageProbabilityOfRain > 60:
+        return WATERING_INTENSITY_LEVEL_NONE
 
 def handleWatering():
     global RAINING_DAY_BEFORE
