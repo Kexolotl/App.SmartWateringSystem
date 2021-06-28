@@ -32,10 +32,16 @@ class OpenWeatherHandler:
         self._weatherData = data
 
     def getAverageProbabilityOfRain(self, amountOfHours):
+
+        values = self._weatherData[self._wantedWeatherData[0]] # progrnose for daily
+        today = values[0] # progrnose for daily
+        if "rain" not in today:
+            return 0
+        else:
+            return today["rain"]
+        
         logging.info("Get average probability of rain for the next %s hours." % (amountOfHours))
-
         values = self._weatherData[self._wantedWeatherData[1]] # prognose for the next five days in hours
-
         rainPercentages = []
         for i in range(0, amountOfHours):
             valuesForHour = values[i]
@@ -51,7 +57,8 @@ class OpenWeatherHandler:
         logging.info("Get weather forcast for today")
 
         values = self._weatherData[self._wantedWeatherData[0]]
-        return "Rain" in values["weather"]["main"]
+        today = values[0]
+        return "Rain" in today["weather"][0]["main"]
 
     def getAverageTemperature(self, amountOfHours):
         logging.info("Get average temperature for the next %s hours." % (amountOfHours))
