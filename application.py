@@ -115,7 +115,7 @@ def handleWatering():
         logging.info("No weahter data was found.")
         return
 
-    averageProbabilityOfRain = openWeatherHandler.getAverageProbabilityOfRain(HOURS_FOR_WEATHER_CALCULATION)
+    averageProbabilityOfRain = openWeatherHandler.getAverageProbabilityOfRain()
     averageTemperature = openWeatherHandler.getAverageTemperature(8)
 
     wateringDuration = appSettings["Watering"]["WateringDurationInSeconds"]
