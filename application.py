@@ -81,7 +81,6 @@ def initWeatherHandler():
 def initSmartPlugHandler():
     global smartPlugHandler
     smartPlugHandler = SmartPlugHandler(appSettings["SmartPlug"]["IpAddress"])
-    smartPlugHandler.connect()
     logging.info('Configure smart plug handler finished.')
 
     smartPlugHandler.turnOff() # turn off initial
@@ -110,6 +109,12 @@ def emitWaterIntesity(averageProbabilityOfRain, averageTemperature):
 def handleWatering():
     global RAINING_DAY_BEFORE
     logging.info("Start handle watering.")
+
+    openWeatherHandler.loadWeatherData()
+    if openWeatherHandler._wantedWeatherData == None:
+        logging.info("No weahter data was found.")
+        return
+
     averageProbabilityOfRain = openWeatherHandler.getAverageProbabilityOfRain(HOURS_FOR_WEATHER_CALCULATION)
     averageTemperature = openWeatherHandler.getAverageTemperature(8)
 
@@ -125,24 +130,14 @@ def handleWatering():
     
     RAINING_DAY_BEFORE = openWeatherHandler.isRainingToday()
 
+initSettings()
+initLogging()
+schedulerThread = threading.Thread(target=startScheduler)  
+schedulerThread.start()
+
+initWeatherHandler()
+initSmartPlugHandler()
+
 if __name__ == '__main__':
-    initSettings()
-
-    if os.environ.get("WERKZEUG_RUN_MAIN") == "true" and appSettings["Environment"] == "LOCAL":
-        initLogging()
-        schedulerThread = threading.Thread(target=startScheduler)  
-        schedulerThread.start()
-        
-        initWeatherHandler()
-        initSmartPlugHandler()
     app.run(host="localhost", port=28200, debug=True, use_reloader=True)
-else:
-    initSettings()
-    initLogging()
-
-    initWeatherHandler()
-    initSmartPlugHandler()
-
-    schedulerThread = threading.Thread(target=startScheduler)  
-    schedulerThread.start()
         

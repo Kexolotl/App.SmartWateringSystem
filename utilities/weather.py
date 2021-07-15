@@ -27,12 +27,14 @@ class OpenWeatherHandler:
         unwantedWeatherDataAsString = separator.join(self._unwantedWeatherData)
 
         url = self._openWeatherUrl % (self._latitude, self._longitude, unwantedWeatherDataAsString, self.appId)
-        response = requests.get(url)
-        data = json.loads(response.text)
-        self._weatherData = data
+        try:
+            response = requests.get(url)
+            data = json.loads(response.text)
+            self._weatherData = data
+        except:
+            self._weatherData = None
 
     def getAverageProbabilityOfRain(self, amountOfHours):
-
         values = self._weatherData[self._wantedWeatherData[0]] # progrnose for daily
         today = values[0] # progrnose for daily
         if "rain" not in today:
