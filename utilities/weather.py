@@ -43,7 +43,6 @@ class OpenWeatherHandler:
             return today["rain"]
     
     def getAverageProbabilityOfRainByHours(self, amountOfHours):
-        values = self._weatherData[self._wantedWeatherData[0]] # progrnose for daily
         logging.info("Get average probability of rain for the next %s hours." % (amountOfHours))
         values = self._weatherData[self._wantedWeatherData[1]] # prognose for the next five days in hours
         rainPercentages = []
