@@ -100,10 +100,12 @@ def emitWaterIntesity(averageProbabilityOfRain, averageTemperature):
         return WATERING_INTENSITY_LEVEL_NONE
 
     if averageProbabilityOfRain <= 20:
+        if averageTemperature < 25:
+            return WATERING_INTENSITY_LEVEL_LOW
         return WATERING_INTENSITY_LEVEL_MEDIUM
-    elif 20 < averageProbabilityOfRain <= 60:
+    elif 20 < averageProbabilityOfRain <= 50:
         return WATERING_INTENSITY_LEVEL_LOW
-    elif averageProbabilityOfRain > 60:
+    elif averageProbabilityOfRain > 50:
         return WATERING_INTENSITY_LEVEL_NONE
 
 def handleWatering():
