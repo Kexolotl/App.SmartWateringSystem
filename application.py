@@ -82,7 +82,7 @@ def initSmartPlugHandler():
     global smartPlugHandler
     smartPlugHandler = SmartPlugHandler(appSettings["SmartPlug"]["IpAddress"])
     logging.info('Configure smart plug handler finished.')
-
+    smartPlugHandler.connect()
     smartPlugHandler.turnOff() # turn off initial
 
 def startScheduler():
