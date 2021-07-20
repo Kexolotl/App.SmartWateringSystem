@@ -25,8 +25,6 @@ RAINING_DAY_BEFORE = False
 
 @app.route("/")
 def index():
-    value = smartPlugHandler.isOnline
-    logging.info(value)
     return render_template('index.html')
 
 @app.route("/logs")
