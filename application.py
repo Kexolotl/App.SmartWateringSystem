@@ -75,7 +75,6 @@ def initWeatherHandler():
     global openWeatherHandler
     openWeatherHandler = OpenWeatherHandler()
     openWeatherHandler.init(appSettings["OpenWeather"])
-    openWeatherHandler.loadWeatherData()
     logging.info('Configure weather handler finished.')
 
 def initSmartPlugHandler():
@@ -112,9 +111,10 @@ def handleWatering():
     global RAINING_DAY_BEFORE
     logging.info("Start handle watering.")
 
-    openWeatherHandler.loadWeatherData()
-    if openWeatherHandler._wantedWeatherData == None:
-        logging.info("No weahter data was found.")
+    try:
+        openWeatherHandler.loadWeatherData()
+    except:
+        logging.error("Loading weather data failed.")
         return
 
     averageProbabilityOfRain = openWeatherHandler.getAverageProbabilityOfRain()

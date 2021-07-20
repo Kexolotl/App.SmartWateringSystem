@@ -32,7 +32,7 @@ class OpenWeatherHandler:
             data = json.loads(response.text)
             self._weatherData = data
         except:
-            self._weatherData = None
+            raise Exception("Error while loading weather data.")
 
     def getAverageProbabilityOfRain(self):
         values = self._weatherData[self._wantedWeatherData[0]] # progrnose for daily
