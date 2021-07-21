@@ -8,7 +8,7 @@ class SmartPlugHandler:
     _ipAddress = ""
 
     @property
-    def isOnline(self):
+    def isOn(self):
         return self._plug.state == "ON"
 
     def __init__(self, ipAddress):
@@ -16,7 +16,10 @@ class SmartPlugHandler:
         self._ipAddress = ipAddress
 
     def connect(self):
-        self._plug = SmartPlug(self._ipAddress)
+        try:
+            self._plug = SmartPlug(self._ipAddress)
+        except SmartDeviceException:
+            logging.warning("Can not connect with smart plug.")
 
     def disconnect(self):
         logging.info("Disconnect smart plug with ip address %s." % (self._ipAddress))
@@ -27,6 +30,8 @@ class SmartPlugHandler:
     def repeat(self, amountOfRepeat, wateringDuration, delayBetweenWatering):
         try:
             self.connect()
+            if self.isOn:
+                self.turnOff()
 
             logging.info('Start repeating interval with smart plug %s.' % self._ipAddress)
             for i in range(0, amountOfRepeat):

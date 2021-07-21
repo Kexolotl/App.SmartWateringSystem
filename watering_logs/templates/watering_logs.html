@@ -1,0 +1,9 @@
+<h1>Log ouput</h1>
+
+{% if not lines %}
+    No log found.
+{% endif %}
+
+{% for log in lines %}
+{{ log }}<br>
+{% endfor %}
