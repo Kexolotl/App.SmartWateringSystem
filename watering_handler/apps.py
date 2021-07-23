@@ -104,14 +104,17 @@ def handleWatering():
 class WateringHandlerConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'watering_handler'
+    run_already = False
 
     def ready(self):
-        # put your startup code here
-        initSettings()
-        initLogging()
-        initWeatherHandler()
-        initSmartPlugHandler()
+        if not self.run_already:
+            # put your startup code here
+            initSettings()
+            initLogging()
+            initWeatherHandler()
+            initSmartPlugHandler()
 
-        scheduler = BackgroundScheduler()
-        scheduler.add_job(handleWatering, 'interval', minutes=1, id='my_job_id')
-        scheduler.start()
+            scheduler = BackgroundScheduler()
+            scheduler.add_job(handleWatering, 'interval', minutes=1, id='my_job_id')
+            scheduler.start()
+            self.run_already = True
