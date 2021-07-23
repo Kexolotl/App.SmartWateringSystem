@@ -107,7 +107,6 @@ class WateringHandlerConfig(AppConfig):
 
     def ready(self):
         # put your startup code here
-        print("rdy")
         initSettings()
         initLogging()
         initWeatherHandler()
