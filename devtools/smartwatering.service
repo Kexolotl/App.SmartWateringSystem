@@ -1,12 +1,12 @@
 [Unit]
-Description = uWSGI instance to serve App.SmartWateringSystem
+Description=Watering App
 After=network.target
 
 [Service]
 User=www-data
 Group=www-data
 WorkingDirectory=/home/pi/App.SmartWateringSystem/
-ExecStart=/usr/local/bin/uwsgi --ini /home/pi/App.SmartWateringSystem/uwsgi.ini
+ExecStart=/usr/local/bin/gunicorn --bind 127.0.0.1:8000 --access-logfile - --workers 3 --bind unix:/home/pi/App.SmartWateringSystem/SmartWateringSystem.sock app.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
