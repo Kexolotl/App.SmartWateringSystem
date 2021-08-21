@@ -23,5 +23,11 @@
         "TimeForWatering": "08:00",
         "WateringDurationInSeconds": 60,
         "DelayBetweenWateringInSeconds": 15
+    },
+    "WaterIntensityLevels": {
+        "Watering_Intensity_Level_High": 3,
+        "Watering_Intensity_Level_Medium": 2,
+        "Watering_Intensity_Level_Low": 1,
+        "Watering_Intensity_Level_None": 0
     }
 }

@@ -12,14 +12,6 @@ appSettings = None
 smartPlugHandler = None
 openWeatherHandler = None
 
-RAINING_DAY_BEFORE = False
-
-HOURS_FOR_WEATHER_CALCULATION = 8
-WATERING_INTENSITY_LEVEL_HIGH = 3
-WATERING_INTENSITY_LEVEL_MEDIUM = 2
-WATERING_INTENSITY_LEVEL_LOW = 1
-WATERING_INTENSITY_LEVEL_NONE = 0
-
 def initSettings():
     if not os.path.isfile("settings.json"):
         raise Exception('Missing configuration file `settings.json`. Please create this with `settings_example.json`.')
@@ -40,6 +32,8 @@ def initLogging():
 
     if "LogFile" in appSettings["Logging"] and appSettings["Logging"]["LogFile"]:
         logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S', filename=appSettings["Logging"]["LogFile"], level=logLevel)
+
+    logging.getLogger('apscheduler.executors.default').setLevel(logging.WARNING)
     logging.info('Configure logging finisehd.')
 
 def initWeatherHandler():
@@ -56,17 +50,24 @@ def initSmartPlugHandler():
     #smartPlugHandler.turnOff() # turn off initial
 
 def emitWaterIntesity(averageProbabilityOfRain, averageTemperature):
-    if RAINING_DAY_BEFORE and averageTemperature < 30:
-        return WATERING_INTENSITY_LEVEL_NONE
+    high_intensity = appSettings["WaterIntensityLevels"]["Watering_Intensity_Level_High"]
+    medium_intensity = appSettings["WaterIntensityLevels"]["Watering_Intensity_Level_Medium"]
+    low_intensity = appSettings["WaterIntensityLevels"]["Watering_Intensity_Level_Low"]
+    none_intensity = appSettings["WaterIntensityLevels"]["Watering_Intensity_Level_None"]
 
-    if averageProbabilityOfRain <= 20:
-        if averageTemperature < 25:
-            return WATERING_INTENSITY_LEVEL_LOW
-        return WATERING_INTENSITY_LEVEL_MEDIUM
-    elif 20 < averageProbabilityOfRain <= 50:
-        return WATERING_INTENSITY_LEVEL_LOW
-    elif averageProbabilityOfRain > 50:
-        return WATERING_INTENSITY_LEVEL_NONE
+    if (averageProbabilityOfRain > 30):
+        return low_intensity
+
+    if averageTemperature > 25:
+        return high_intensity
+
+    if averageTemperature <= 25 and averageTemperature > 18:
+        return medium_intensity
+
+    if averageTemperature < 18 and averageTemperature > 10:
+        return low_intensity
+
+    return none_intensity
 
 def handleWatering():
     startAt = appSettings["Watering"]["TimeForWatering"]
@@ -76,9 +77,9 @@ def handleWatering():
     if not current_time == startAt:
         return
 
-    global RAINING_DAY_BEFORE
-    logging.info("Start handle watering.")
+    do_watering()
 
+def do_watering():
     try:
         openWeatherHandler.loadWeatherData()
             
@@ -95,7 +96,7 @@ def handleWatering():
         logging.info("Repeat watering with intesity of %s  watering duration %s and delay %s." % (waterIntensity, wateringDuration, delayBetweenWatering))
         smartPlugHandler.repeat(waterIntensity, wateringDuration, delayBetweenWatering)
         
-        RAINING_DAY_BEFORE = openWeatherHandler.isRainingToday()
+        # RAINING_DAY_BEFORE = openWeatherHandler.isRainingToday() # put to sqlite db        
     except Exception:
         logging.error("Error while handling watering.")
         return
