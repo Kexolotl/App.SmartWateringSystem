@@ -77,9 +77,6 @@ def handleWatering():
     if not current_time == startAt:
         return
 
-    do_watering()
-
-def do_watering():
     try:
         openWeatherHandler.loadWeatherData()
             
@@ -100,6 +97,11 @@ def do_watering():
     except Exception:
         logging.error("Error while handling watering.")
         return
+
+def do_watering():
+    wateringDuration = appSettings["Watering"]["WateringDurationInSeconds"]
+    delayBetweenWatering = appSettings["Watering"]["DelayBetweenWateringInSeconds"]
+    smartPlugHandler.handleInterval(wateringDuration, delayBetweenWatering)
 
 
 class WateringHandlerConfig(AppConfig):
